@@ -9,61 +9,104 @@
     <link href="https://cdn.maptiler.com/maptiler-sdk-js/v1.2.0/maptiler-sdk.css" rel="stylesheet" />
     <script src="https://cdn.maptiler.com/leaflet-maptilersdk/v2.0.0/leaflet-maptilersdk.js"></script>
     <style>
-      html,body {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-        overflow: auto; 
-        width: 1792px;
-        min-width: 1792px;
-        max-width: 1792px;
-        height: 1033px;
-        min-height: 1033px;
-        max-height: 1033px;
+      html, body {
+          margin: 0;
+          padding: 0;
+          height: 100%;
+          box-sizing: border-box;
       }
-      * { font-family: "Arial";}
-      #map {position: absolute; top: 7%; left: 10%; bottom: 3%; width:20%;}
-      #collageBack {position: absolute; top: 7%; left: 30%; bottom: 3%; width:60%; background-image: url(p.webp); background-size: cover;}
-      #collage {position: absolute; top: 7%; left: 30%; bottom: 3%; width:60%; background-color: rgba(255,255,255,0.9);}
-      .item {  
-          display: inline-block;  
-          background: #fff;  
-          padding: 0.5em;  
-          margin: 0 0 1.5em;  
-          max-width: 20rem;  
-          max-height: 70vh;  
-          -webkit-transition: 0.5s;  
-          box-sizing: border-box;  
-          -moz-box-sizing: border-box;  
-          -webkit-box-sizing: border-box;  
-          box-shadow: 2px 2px 10px rgb(140, 134, 134);  
-          border-radius: 2px 2px 2px 2px;  
+      *, *:before, *:after {
+          box-sizing: inherit;
+      }
+      .container {
+          display: flex;
+          margin-left: 60px;
+          margin-right: 60px;
+          margin-top: 20px;
+          margin-bottom: 0px;
+          height: calc(100vh - 20px);
+          scale: 0.85;
+          transform: translateY(-50px);
+      }
+      #map {
+          flex: 1;
+      }
+      .picturesback::before {
+        content: "";
+        position:absolute;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background-image: url(p.webp);
+        background-size: cover;
+        filter: grayscale(90%);
+      }
+      .picturesback {
+        flex: 2;
+        position: relative;
+      }
+      .pictures {
+          flex: 2;
+          display: flex;
           flex-wrap: wrap;
+          justify-content: space-around;
+      }
+      .picture {
+          background-color: #fff;
+          padding: 10px;
+          margin: 10px;
+          flex-basis: calc(33.333% - 20px);
+          max-width: 20rem;
+          box-sizing: border-box;
+          box-shadow: 2px 2px 10px rgb(140, 134, 134);
           cursor: pointer;
       }
-      .item img {  
-          max-width: 100%;  
-          max-height: 30vh;
+      .picture.single {
+          flex-basis: 100%;
+          max-width: unset;
+          margin: 20px;
+      }
+      .picture img {
+        max-width: 100%;
+      }
+      @media (max-width: 768px) {
+          #map {
+            display: none;
+          }
+          .container {
+              flex-direction: column;
+              margin: 0;
+          }
+          .map, .pictures {
+              width: 100%;
+          }
+          .picture {
+              flex-basis: 100%;
+          }
       }
       #full-image {
-        z-index: 10000000;
-        position: absolute;
-        left: 0;
-        right: 0;
-        top: 0;
-        bottom: 0;
-        background-color: rgb(66, 66, 66);
+          z-index: 10000000;
+          position: fixed;
+          left: 0;
+          right: 0;
+          top: 0;
+          bottom: 0;
+          background-color: rgb(66, 66, 66);
       }
       #full-image div {
-        margin-top: 20px;
-        margin-bottom: 20px;
-        color: white;
+          margin-top: 20px;
+          margin-bottom: 20px;
+          color: white;
       }
       #full-image div img {
-        margin-left: auto;
-        margin-right: auto;
-        max-width: 80vw;
-        max-height: 80vh;
+          margin-left: auto;
+          margin-right: auto;
+          max-width: 80vw;
+          max-height: 80vh;
+      }
+      .center-container {
+          width: 100vw;
+          display: grid;
+          place-items: center;
       }
       .image-container {
           position: relative;
@@ -85,22 +128,10 @@
       .image-container button:hover {
           opacity: 1; /* Change opacity on hover for better interaction feedback */
       }
-      .center-container {
-        width: 100vw;
-        display: grid;
-        place-items: center; 
-      }
-      .page-center-container {
-        width: 1792px;
-        height: 1033px;
-        display: grid;
-        place-items: center; 
-      }
-
       .hidden {
-        display: none;
+        display:none;
       }
-    </style>
+  </style>
   </head>
   <body>
     <script>
@@ -188,29 +219,35 @@
       ]
     </script>
       <h1 style="margin-left: 10%">Portugal – April 2024 <small><i>(🚲 580km, 4900m elevation)</i></small></h1>
-      <div id="map"></div>
-      <div id="collageBack"></div>
-      <div id="collage">
-        <div class="item" style="position: absolute; left: 20px; top: 40px; transform: rotate(1deg);"><img src="10.jpg" onclick="show(0)" /><span>Ponte Vasco da Gama</span></div>
-        <div class="item" style="position: absolute; left: 360px; top: 53px; transform: rotate(-2deg);"><img src="9.jpeg" onclick="show(1)" /><span>Nazare Beach</span></div>
-        <div class="item" style="position: absolute; left: 700px; top: 40px; transform: rotate(2deg);"><img src="7.jpeg" onclick="show(2)" /><span>Nazare Surfing Statue</span></div>
-        <div class="item" style="position: absolute; left: 120px; top: 330px; transform: rotate(0deg); max-width:50rem" onclick="show(3)"><img src="8.jpeg" /><span>Nazare Sunrise at cliff</span></div>
-        <div class="item" style="position: absolute; left: 20px; top: 630px; transform: rotate(-2deg);"><img src="5.jpeg" onclick="show(4)" /><span>Bench at Mira-Beach Lake</span></div>
-        <div class="item" style="position: absolute; left: 360px; top: 630px; transform: rotate(1deg);"><img src="3.jpeg" onclick="show(5)" /><span>Quinta da Lagoa</span></div>
-        <div class="item" style="position: absolute; left: 690px; top: 640px; transform: rotate(-1deg); max-width:23rem" onclick="show(6)" ><img src="2.jpeg" /><span>Porto skyline at sunset</span></div>
-      </div>
-      <div id="full-image" class="hidden">
+      <div class="container">
+        <div id="map">
+            <!-- Map content goes here -->
+        </div>
+        <div class="picturesback">
+          <div class="pictures">
+              <!-- Pictures content goes here -->
+              <div class="picture" style="transform: rotate(1deg);"><img src="10.jpg" onclick="show(0)" /><span>Ponte Vasco da Gama</span></div>
+              <div class="picture" style="transform: rotate(-2deg);"><img src="9.jpeg" onclick="show(1)" /><span>Nazare Beach</span></div>
+              <div class="picture" style="transform: rotate(2deg);"><img src="7.jpeg" onclick="show(2)" /><span>Nazare Surfing Statue</span></div>
+              <div class="picture single" style="transform: rotate(0deg);" onclick="show(3)"><img src="8.jpeg" /><span>Nazare Sunrise at cliff</span></div>
+              <div class="picture" style="transform: rotate(-2deg);"><img src="5.jpeg" onclick="show(4)" /><span>Bench at Mira-Beach Lake</span></div>
+              <div class="picture" style="transform: rotate(1deg);"><img src="3.jpeg" onclick="show(5)" /><span>Quinta da Lagoa</span></div>
+              <div class="picture" style="transform: rotate(-1deg); max-width:23rem" onclick="show(6)" ><img src="2.jpeg" /><span>Porto skyline at sunset</span></div>
+          </div>
+        </div>
+    </div>
+    <div id="full-image" class="hidden">
         <div class="center-container">
             <div class="image-container">
-              <button onclick="goBack()">Back</button>
-              <img id="image-image" src="" />
+                <button onclick="goBack()">Back</button>
+                <img id="image-image" src="" />
             </div>
             <div>
-              <span id="image-text"></span><br/>
-              <span><i id="image-subtext"></i></span>
+                <b><span id="image-text"></span></b><br/>
+                <span><i id="image-subtext"></i></span>
             </div>
         </div>
-      </div>
+    </div>
     <script>
       const key = 'i0jipSy3K8wG4dcfZqZ5';
       async function loadData(url) {
