@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>Portugal – April 2024</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.maptiler.com/maptiler-sdk-js/v1.2.0/maptiler-sdk.umd.js"></script>
+    <link href="https://cdn.maptiler.com/maptiler-sdk-js/v1.2.0/maptiler-sdk.css" rel="stylesheet" />
+    <script src="https://cdn.maptiler.com/leaflet-maptilersdk/v2.0.0/leaflet-maptilersdk.js"></script>
+    <style>
+      html,body {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        overflow: auto; 
+        width: 1792px;
+        min-width: 1792px;
+        max-width: 1792px;
+        height: 1033px;
+        min-height: 1033px;
+        max-height: 1033px;
+      }
+      * { font-family: "Arial";}
+      #map {position: absolute; top: 7%; left: 10%; bottom: 3%; width:20%;}
+      #collageBack {position: absolute; top: 7%; left: 30%; bottom: 3%; width:60%; background-image: url(p.webp); background-size: cover;}
+      #collage {position: absolute; top: 7%; left: 30%; bottom: 3%; width:60%; background-color: rgba(255,255,255,0.9);}
+      .item {  
+          display: inline-block;  
+          background: #fff;  
+          padding: 0.5em;  
+          margin: 0 0 1.5em;  
+          max-width: 20rem;  
+          max-height: 70vh;  
+          -webkit-transition: 0.5s;  
+          box-sizing: border-box;  
+          -moz-box-sizing: border-box;  
+          -webkit-box-sizing: border-box;  
+          box-shadow: 2px 2px 10px rgb(140, 134, 134);  
+          border-radius: 2px 2px 2px 2px;  
+          flex-wrap: wrap;
+          cursor: pointer;
+      }
+      .item img {  
+          max-width: 100%;  
+          max-height: 30vh;
+      }
+      #full-image {
+        z-index: 10000000;
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        background-color: rgb(66, 66, 66);
+      }
+      #full-image div {
+        margin-top: 20px;
+        margin-bottom: 20px;
+        color: white;
+      }
+      #full-image div img {
+        margin-left: auto;
+        margin-right: auto;
+        max-width: 80vw;
+        max-height: 80vh;
+      }
+      .image-container {
+          position: relative;
+          display: inline-block; /* or 'block' depending on your layout needs */
+      }
+
+      .image-container button {
+          position: absolute;
+          top: 0;
+          left: 0;
+          padding: 8px 16px;
+          background-color: rgb(63, 63, 63); /* Red button, change as needed */
+          color: white;
+          border: none;
+          cursor: pointer;
+          opacity: 0.8;
+      }
+
+      .image-container button:hover {
+          opacity: 1; /* Change opacity on hover for better interaction feedback */
+      }
+      .center-container {
+        width: 100vw;
+        display: grid;
+        place-items: center; 
+      }
+      .page-center-container {
+        width: 1792px;
+        height: 1033px;
+        display: grid;
+        place-items: center; 
+      }
+
+      .hidden {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <script>
+      window.entries = [
+        {
+          image: '10.jpg',
+          text: 'Ponte Vasco da Gama',
+          subText: 'The longest bridge in Europe. Located in the northern part of Lisbon.'
+        },
+        {
+          image: '9.jpeg',
+          text: 'Nazare Beach',
+          subText: 'Beach in the midst of Portugal. It is a huge tourist attraction not only for surfing.'
+        },
+        {
+          image: '7.jpeg',
+          text: 'Nazare Surfing Statue',
+          subText: 'Nazare has the highest waves in the world reaching up to 30m in height with a new record by Sebastian Steudtner just being checked – height 28.57m. The statue with the elk head is the symbol of the surfing culture.'
+        },
+        {
+          image: '8.jpeg',
+          text: 'Nazare Sunrise at cliff',
+          subText: 'Nazare has a cliff called Sitio towering at 110m that is also home to a small fort at the edge of the Atlantic.<br/><br/><a target="_blank" style="color:white; font-weight: bold;" href="https://photos.app.goo.gl/PwixydQjfu9APPKu9">Video</a>'
+        },
+        {
+          image: '5.jpeg',
+          text: 'Praia de Mira Lake',
+          subText: 'Mira marks the start of the Aveiro Lagoon, after miles of dry dunes to the south it surpises with lush green forests and lakes.'
+        },
+        {
+          image: '3.jpeg',
+          text: 'Quinta da Lagoa',
+          subText: 'Suprisingly beautiful hotel with its own lake that has an island with rentable houses on them and even boats to escape onto the lake.'
+        },
+        {
+          image: '2.jpeg',
+          text: 'Porto skyline at sunset',
+          subText: 'Porto lies directly at the atlantic but sits on top of a mountain. This shot is from the highest building in Porto looking directly towards the Atlantic.'
+        },
+        {
+          image: '11.jpeg',
+          text: 'Cascata da Portela do Homem',
+          subText: 'Beautiful waterfall next to the border to spain. In summer people also swim in the water – in April the water still was quite cold 🥶.<br/><br/><a target="_blank" style="color:white; font-weight: bold;" href="https://photos.app.goo.gl/4ikMXpWsAUmjheXu8">Video</a>'
+        },
+        {
+          image: '12.jpeg',
+          text: 'National Park: Peneda Geres',
+          subText: 'National park in the north of Portugal with probably the highest ratio of people to waterfalls and a quite big reservoir lake. For all the German folks: this picture somehow reminded me of Krombacher commercials.'
+        },
+        {
+          image: '4.jpeg',
+          text: 'Beach at Praia de Mira',
+          subText: 'Mira is a rather small town with a small extension: "Praia de Mira" which simply translates to "beach of Mira".'
+        },
+        {
+          image: '13.jpeg',
+          text: 'Bench at the lake in Praia de Mira',
+          subText: 'There are a few benches at the lake in Praia de Mira. Simply another angle 😍.'
+        },
+        {
+          image: '14.jpeg',
+          text: 'Lighthouse at the Atlantic coast',
+          subText: 'A lighthouse at the Atlantic coast with several fishers climbing on the cliffs to fish in the ocean.<br/><br/><a target="_blank" style="color:white; font-weight: bold;" href="https://photos.app.goo.gl/6Db5GSPBJTSNn3r86">Video (if you watch closely you see a fisher in the end)</a>'
+        },
+        {
+          image: '15.jpeg',
+          text: 'Castelo de Óbidos',
+          subText: 'Impressive town walls and castle in the town of Óbidos. Still in very good shape and home of many medievial festivals.'
+        },
+        {
+          image: '16.jpeg',
+          text: 'Aqueduto das Águas Livres',
+          subText: 'Aqueduct built in the 18th century in the middle of Lisbon with the largest stone arch of 65m towering at 75m above the ground.'
+        },
+        {
+          image: '17.jpeg',
+          text: 'Benagil caves',
+          subText: 'Impressive caves in the south of Portugal. It is possible to visit the caves by boat and one of those caves even has a beach and an opening that allows sun light to shine into the cave. <br/><br/><a target="_blank" style="color:white; font-weight: bold;" href="https://photos.app.goo.gl/he3tqv1HCPVzut2p8">Video</a>'
+        },
+        {
+          image: '18.jpeg',
+          text: 'Peacock in Lisbon',
+          subText: 'Peacock protecting the entrance to the entrance to Castelo de S Jorge.'
+        }
+      ]
+    </script>
+      <h1 style="margin-left: 10%">Portugal – April 2024 <small><i>(🚲 580km, 4900m elevation)</i></small></h1>
+      <div id="map"></div>
+      <div id="collageBack"></div>
+      <div id="collage">
+        <div class="item" style="position: absolute; left: 20px; top: 40px; transform: rotate(1deg);"><img src="10.jpg" onclick="show(0)" /><span>Ponte Vasco da Gama</span></div>
+        <div class="item" style="position: absolute; left: 360px; top: 53px; transform: rotate(-2deg);"><img src="9.jpeg" onclick="show(1)" /><span>Nazare Beach</span></div>
+        <div class="item" style="position: absolute; left: 700px; top: 40px; transform: rotate(2deg);"><img src="7.jpeg" onclick="show(2)" /><span>Nazare Surfing Statue</span></div>
+        <div class="item" style="position: absolute; left: 120px; top: 330px; transform: rotate(0deg); max-width:50rem" onclick="show(3)"><img src="8.jpeg" /><span>Nazare Sunrise at cliff</span></div>
+        <div class="item" style="position: absolute; left: 20px; top: 630px; transform: rotate(-2deg);"><img src="5.jpeg" onclick="show(4)" /><span>Bench at Mira-Beach Lake</span></div>
+        <div class="item" style="position: absolute; left: 360px; top: 630px; transform: rotate(1deg);"><img src="3.jpeg" onclick="show(5)" /><span>Quinta da Lagoa</span></div>
+        <div class="item" style="position: absolute; left: 690px; top: 640px; transform: rotate(-1deg); max-width:23rem" onclick="show(6)" ><img src="2.jpeg" /><span>Porto skyline at sunset</span></div>
+      </div>
+      <div id="full-image" class="hidden">
+        <div class="center-container">
+            <div class="image-container">
+              <button onclick="goBack()">Back</button>
+              <img id="image-image" src="" />
+            </div>
+            <div>
+              <span id="image-text"></span><br/>
+              <span><i id="image-subtext"></i></span>
+            </div>
+        </div>
+      </div>
+    <script>
+      const key = 'i0jipSy3K8wG4dcfZqZ5';
+      async function loadData(url) {
+          try {
+              const response = await fetch(url);
+              if (!response.ok) {
+                  throw new Error(`HTTP error! Status: ${response.status}`);
+              }
+              const data = await response.json();
+              return data;
+          } catch (error) {
+              console.error('Could not load JSON data:', error);
+          }
+      }
+
+      async function initMap() {
+          const map = L.map('map').setView([39.5, -8.5], 10);
+          const mtLayer = L.maptilerLayer({
+              apiKey: key,
+              style: "outdoor-v2",
+              scaleControl: false,
+          }).addTo(map);
+          window.LMap = map;
+
+          try {
+              const data = await loadData('data.json');
+              if (data) {
+                  const coordinates = data.map(item => [item.lat, item.lng]);
+                  const polyline = L.polyline(coordinates, {color: 'blue'}).addTo(map);
+                  map.fitBounds(polyline.getBounds());
+
+                  var camera = L.icon({
+                      iconUrl: 'camera.png',
+
+                      iconSize:     [42, 42],
+                      iconAnchor:   [21, 38]
+                  });
+                  const marker10 = L.marker([38.781, -9.090909], {icon: camera}).addTo(map).on('click', () => show(0));
+                  const marker9 = L.marker([39.603, -9.0742], {icon: camera}).addTo(map).on('click', () => show(1));
+                  const marker7 = L.marker([39.605, -9.0799], {icon: camera}).addTo(map).on('click', () => show(2));
+                  const marker8 = L.marker([39.605, -9.0728], {icon: camera}).addTo(map).on('click', () => show(3));
+                  const marker5 = L.marker([40.449, -8.7935], {icon: camera}).addTo(map).on('click', () => show(4));
+                  const marker3 = L.marker([40.443, -8.759], {icon: camera}).addTo(map).on('click', () => show(5));
+                  const marker2 = L.marker([41.156, -8.6022], {icon: camera}).addTo(map).on('click', () => show(6));
+                  const marker11 = L.marker([41.799, -8.1336], {icon: camera}).addTo(map).on('click', () => show(7));
+                  const marker12 = L.marker([41.676, -8.1802], {icon: camera}).addTo(map).on('click', () => show(8));
+                  const marker4 = L.marker([40.454, -8.8048], {icon: camera}).addTo(map).on('click', () => show(9));
+                  const marker13 = L.marker([40.4493, -8.7935], {icon: camera}).addTo(map).on('click', () => show(10));
+                  const marker14 = L.marker([39.764, -9.0308], {icon: camera}).addTo(map).on('click', () => show(11));
+                  const marker15 = L.marker([39.364, -9.1575], {icon: camera}).addTo(map).on('click', () => show(12));
+                  const marker16 = L.marker([38.730, -9.1687], {icon: camera}).addTo(map).on('click', () => show(13));
+                  const marker17 = L.marker([37.088, -8.4216], {icon: camera}).addTo(map).on('click', () => show(14));
+                  const marker18 = L.marker([38.713, -9.1332], {icon: camera}).addTo(map).on('click', () => show(15));
+              } else {
+                  throw new Error('No data received from server');
+              }
+          } catch (error) {
+              console.error('Error processing map data:', error);
+          }
+      }
+
+      initMap();
+      function show(entryId) {
+        const entry = window.entries[entryId];
+        document.getElementById('image-text').innerText = entry.text;
+        document.getElementById('image-subtext').innerHTML = entry.subText;
+        document.getElementById('image-image').setAttribute('src', entry.image);
+        document.getElementById('full-image').classList.remove('hidden');
+      }
+
+      function goBack() {
+        document.getElementById('full-image').classList.add('hidden');
+      }
+      document.onkeydown = function(evt) {
+          evt = evt || window.event;
+          var isEscape = false;
+          if ("key" in evt) {
+              isEscape = (evt.key === "Escape" || evt.key === "Esc");
+          } else {
+              isEscape = (evt.keyCode === 27);
+          }
+          if (isEscape) {
+              goBack();
+          }
+      };
+    </script>
+  </body>
+</html>
+
+<!-- <!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>Vector Tiles in Leaflet JS</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <link href="./style.css" rel="styesheet" />
+  </head>
+  <body>
+    <div id="map" style="position: absolute!important; left:0; right: 0; top: 0; bottom: 0;"></div>
+    <script src="index.js"></script>
+  </body>
+</html> -->
